@@ -1,8 +1,56 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+html { 
+	height: 100%;
 }
 
-a {
-  color: #00B7FF;
+body { 
+	height: 100%; 
+	margin: 0; 
+	padding: 0;
+}
+
+#map-canvas { 
+	height: 100% 
+}
+
+#header {
+	width: 100%;
+	height : 50px;
+	background-color:  rgba(0, 0, 0, 0.8);;
+	border-bottom:medium solid #CCCCCC;
+	position : fixed;
+	top : 0px;
+	z-index:1;
+}
+
+#results {
+	padding-left : 20px;
+	padding-right : 20px;
+	margin-bottom : 10px;
+	background-color : #F2F2F2;
+	color : black;
+	font-size : 20pt;
+	border-radius : 10px;
+	border : 2px solid;
+	box-shadow: 2px 2px 5px #888888;
+}
+
+#directions {
+	margin-left : 5px;
+	width: 450px;
+	background-color: white;
+	box-shadow: 2px 2px 5px #888888;
+}
+
+input {
+	margin-top : 15px;
+}
+
+.text-box {
+	width : 250px;
+	margin-left : 5px;
+	margin-right : 5px;
+}
+
+#go {
+	width : 40px;
 }

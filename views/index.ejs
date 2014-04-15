@@ -1,20 +1,14 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <style type="text/css">
-      html { height: 100% }
-      body { height: 100%; margin: 0; padding: 0 }
-      #map-canvas { height: 100% }
-    </style>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDTzJ-utsq7meBZdCL8uGtOuSMJdGUiW2w&amp;sensor=false"> </script>
-    <script type="text/javascript" src="/javascripts/map.js" > </script>
-  </head>
-  <body>
-	<div id="map-canvas">
-    <%- include directionsOverlay.ejs %>
-  </div>
-  </body>
+<head>
+  <title><%= title %></title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDTzJ-utsq7meBZdCL8uGtOuSMJdGUiW2w&amp;sensor=false&amp;libraries=places"> </script>
+  <script type="text/javascript" src="/javascripts/map.js" > </script>
+</head>
+<body>
+  <%- include banner.ejs %>
+  <div id="map-canvas"></div>
+</body>
 </html>

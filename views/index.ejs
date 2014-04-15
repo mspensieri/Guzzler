@@ -9,46 +9,12 @@
       body { height: 100%; margin: 0; padding: 0 }
       #map-canvas { height: 100% }
     </style>
-    <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDTzJ-utsq7meBZdCL8uGtOuSMJdGUiW2w&sensor=false">
-    </script>
-    <script type="text/javascript">
-      function initialize() {
-        var mapOptions = {
-          center: new google.maps.LatLng(-34.397, 150.644),
-          zoom: 8
-        };
-        var map = new google.maps.Map(document.getElementById("map-canvas"),
-            mapOptions);
-
-        var origin = prompt('Origin');
-        var destination = prompt('Destination');
-        var mileage = prompt('L/100km');
-
-        var directionService = new google.maps.DirectionsService();
-
-        var directionRequest = {
-            origin:origin,
-            destination:destination,
-            travelMode: google.maps.TravelMode.DRIVING
-        };
-
-        directionService.route(directionRequest, function(res, status){
-           if (status == google.maps.DirectionsStatus.OK) {
-            var distanceInMetres = res.routes[0].legs[0].distance.value;
-            alert('L/100km : ' + mileage + " Distance : " + distanceInMetres + " Litres : " +  getLitres(mileage, distanceInMetres));
-          }
-        });
-      }
-      google.maps.event.addDomListener(window, 'load', initialize);
-
-      function getLitres(mileage, metres)
-      {
-        return (mileage * ((metres/1000)/100));
-      }
-    </script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDTzJ-utsq7meBZdCL8uGtOuSMJdGUiW2w&amp;sensor=false"> </script>
+    <script type="text/javascript" src="/javascripts/map.js" > </script>
   </head>
   <body>
-	<div id="map-canvas"></div>
+	<div id="map-canvas">
+    <%- include directionsOverlay.ejs %>
+  </div>
   </body>
 </html>

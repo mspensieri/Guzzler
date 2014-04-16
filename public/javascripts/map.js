@@ -17,7 +17,7 @@ function initialize() {
   google.maps.event.addDomListener(document.getElementById('go'), 'click', search);
 
   var searchResultsContainer = document.createElement('div');
-  searchResultsContainer.innerHTML = "L/100km : <span id='mileageDisplay'>N/A</span> Distance (metres) : <span id='distance'>N/A</span> Litres : <span id='litres'>N/A</span>";
+  searchResultsContainer.innerHTML = "Litres : <span id='litres' class='value'>N/A</span> Cost (@ $1.35 / L) : <span id='cost' class='value'>N/A</span>";
   searchResultsContainer.id = "results";
 
   searchResultsContainer.index = 1;
@@ -57,11 +57,11 @@ function search()
     if (status == google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(res);
 
-      var distanceInMetres = res.routes[0].legs[0].distance.value;
+      var litres = getLitres(mileage, res.routes[0].legs[0].distance.value).toFixed(2);
+      var cost = '$' + (1.35 * litres).toFixed(2);
 
-      document.getElementById('mileageDisplay').innerHTML = mileage;
-      document.getElementById('distance').innerHTML = distanceInMetres;
-      document.getElementById('litres').innerHTML = getLitres(mileage, distanceInMetres);
+      document.getElementById('litres').innerHTML = litres;
+      document.getElementById('cost').innerHTML = cost;
     }
   });
 }

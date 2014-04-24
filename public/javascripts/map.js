@@ -8,31 +8,61 @@ function initialize() {
     zoom: 10,
     disableDefaultUI:true
   };
-  var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+
+  var map = new google.maps.Map($('#map-canvas')[0], mapOptions);
 
   directionsDisplay.setMap(map);
 
-  setAutocomplete(document.getElementById('start'), map);
-  setAutocomplete(document.getElementById('end'), map);
-  google.maps.event.addDomListener(document.getElementById('go'), 'click', search);
+  var origin = $('#start');
+  origin.val('Montreal, QC, Canada');
 
-  var searchResultsContainer = document.createElement('div');
-  searchResultsContainer.innerHTML = "Litres : <span id='litres' class='value'>N/A</span> Cost (@ $1.35 / L) : <span id='cost' class='value'>N/A</span>";
-  searchResultsContainer.id = "results";
+  var destination = $('#end');
+  destination.val('Ottawa, ON, Canada');
 
-  searchResultsContainer.index = 1;
-  map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(searchResultsContainer);
+  setAutocomplete(origin[0], map);
+  setAutocomplete(destination[0], map);
 
-  var directionsResultsContainer = document.createElement('div');
-  directionsResultsContainer.index = 1;
-  directionsResultsContainer.id = "directions";
+  $('#go').on('click', search);
 
-  map.controls[google.maps.ControlPosition.LEFT_CENTER].push(directionsResultsContainer);
+  var searchResultsContainer = $("<div>");
+  searchResultsContainer.html("Litres : <span id='litres' class='value'>N/A</span> Cost (@ $<span id='cost_per_litre'>1.35</span> / L) : <span id='cost' class='value'>N/A</span>");
+  searchResultsContainer.attr('id', "results");
 
-  directionsDisplay.setPanel(directionsResultsContainer);
+  searchResultsContainer.attr('index', 1);
+  map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(searchResultsContainer[0]);
+
+  var directionsResultsContainer = $("<div>");
+  directionsResultsContainer.attr('index', 1);
+  directionsResultsContainer.attr('id', "directions");
+
+  map.controls[google.maps.ControlPosition.LEFT_CENTER].push(directionsResultsContainer[0]);
+
+  directionsDisplay.setPanel(directionsResultsContainer[0]);
+
+  var slider = $("<div>");
+  slider.attr('id', "gasprice");
+
+  slider.css('height', "50%");
+  slider.css('margin', "20px");
+
+    slider.slider({
+      orientation: "vertical",
+      min: 0,
+      max: 200,
+      value: 135,
+      change: sliderChanged
+  });
+
+  map.controls[google.maps.ControlPosition.RIGHT_CENTER].push(slider[0]);
 }
 
-google.maps.event.addDomListener(window, 'load', initialize);
+function sliderChanged(event, ui)
+{
+  $('#cost_per_litre').text(ui.value / 100);  
+  updateCost();
+}
+
+$(document).ready(initialize);
 
 function getLitres(mileage, metres)
 {
@@ -41,9 +71,9 @@ function getLitres(mileage, metres)
 
 function search()
 {
-  var origin = document.getElementById('start').value;
-  var destination = document.getElementById('end').value;
-  var mileage = document.getElementById('mileage').value;
+  var origin = $('#start').val();
+  var destination = $('#end').val();
+  var mileage = $('#mileage').val();
 
   var directionService = new google.maps.DirectionsService();
 
@@ -58,12 +88,24 @@ function search()
       directionsDisplay.setDirections(res);
 
       var litres = getLitres(mileage, res.routes[0].legs[0].distance.value).toFixed(2);
-      var cost = '$' + (1.35 * litres).toFixed(2);
 
-      document.getElementById('litres').innerHTML = litres;
-      document.getElementById('cost').innerHTML = cost;
+      $('#litres').html(litres);
+
+      updateCost();
     }
   });
+}
+
+function updateCost()
+{
+  var gasPrice = $('#gasprice').slider('value') / 100;
+  var litres = $('#litres').html();
+
+  if(litres !== "N/A"){
+    var costString = '$' + (gasPrice * litres).toFixed(2);
+
+    $('#cost').text(costString);
+  }
 }
 
 function setAutocomplete(input, map)

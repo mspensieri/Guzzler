@@ -1,18 +1,30 @@
 var directionsDisplay;
 
-function initialize() {
-  directionsDisplay = new google.maps.DirectionsRenderer();
+$(document).ready(initialize);
 
+function initialize() 
+{
+  var map = initMap();
+
+  initSearchFields(map);
+  initDirections(map);
+  initCalculationResultsContainer(map);
+  initGasPriceSlider(map);
+}
+
+function initMap()
+{
   var mapOptions = {
     center: new google.maps.LatLng(45.5, -73.5667),
     zoom: 10,
     disableDefaultUI:true
   };
 
-  var map = new google.maps.Map($('#map-canvas')[0], mapOptions);
+  return new google.maps.Map($('#map-canvas')[0], mapOptions);
+}
 
-  directionsDisplay.setMap(map);
-
+function initSearchFields(map)
+{
   var origin = $('#start');
   origin.val('Montreal, QC, Canada');
 
@@ -23,13 +35,12 @@ function initialize() {
   setAutocomplete(destination[0], map);
 
   $('#go').on('click', search);
+}
 
-  var searchResultsContainer = $("<div>");
-  searchResultsContainer.html("Litres : <span id='litres' class='value'>N/A</span> Cost (@ $<span id='cost_per_litre'>1.35</span> / L) : <span id='cost' class='value'>N/A</span>");
-  searchResultsContainer.attr('id', "results");
-
-  searchResultsContainer.attr('index', 1);
-  map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(searchResultsContainer[0]);
+function initDirections(map)
+{
+  directionsDisplay = new google.maps.DirectionsRenderer();
+  directionsDisplay.setMap(map);
 
   var directionsResultsContainer = $("<div>");
   directionsResultsContainer.attr('index', 1);
@@ -38,19 +49,29 @@ function initialize() {
   map.controls[google.maps.ControlPosition.LEFT_CENTER].push(directionsResultsContainer[0]);
 
   directionsDisplay.setPanel(directionsResultsContainer[0]);
+}
 
+function initCalculationResultsContainer(map)
+{
+  var searchResultsContainer = $("<div>");
+  searchResultsContainer.html("Litres : <span id='litres' class='value'>N/A</span> Cost (@ $<span id='cost_per_litre'>1.35</span> / L) : <span id='cost' class='value'>N/A</span>");
+  searchResultsContainer.attr('id', "results");
+
+  searchResultsContainer.attr('index', 1);
+  map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(searchResultsContainer[0]);
+}
+
+function initGasPriceSlider(map)
+{
   var slider = $("<div>");
   slider.attr('id', "gasprice");
-
-  slider.css('height', "50%");
-  slider.css('margin', "20px");
 
     slider.slider({
       orientation: "vertical",
       min: 0,
       max: 200,
       value: 135,
-      change: sliderChanged
+      slide: sliderChanged
   });
 
   map.controls[google.maps.ControlPosition.RIGHT_CENTER].push(slider[0]);
@@ -58,11 +79,9 @@ function initialize() {
 
 function sliderChanged(event, ui)
 {
-  $('#cost_per_litre').text(ui.value / 100);  
+  $('#cost_per_litre').text((ui.value / 100).toFixed(2));  
   updateCost();
 }
-
-$(document).ready(initialize);
 
 function getLitres(mileage, metres)
 {

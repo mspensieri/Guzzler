@@ -96,19 +96,32 @@ function search()
 
   var directionService = new google.maps.DirectionsService();
 
-  var directionRequest = {
-    origin:origin,
-    destination:destination,
-    travelMode: google.maps.TravelMode.DRIVING
-  };
+  if($('#roundtrip').prop('checked')){
+    var directionRequest = {
+      origin:origin,
+      destination:origin,
+      waypoints:[ {'location' : destination} ],
+      travelMode: google.maps.TravelMode.DRIVING
+    };
+  }else{
+    var directionRequest = {
+      origin:origin,
+      destination:destination,
+      travelMode: google.maps.TravelMode.DRIVING
+    };
+  }
 
   directionService.route(directionRequest, function(res, status){
     if (status == google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(res);
 
-      var litres = getLitres(mileage, res.routes[0].legs[0].distance.value).toFixed(2);
+      var legs = res.routes[0].legs;
+      var litres = 0;
+      for(var i = 0; i < legs.length; i++){
+        litres = litres + getLitres(mileage, legs[i].distance.value);
+      }
 
-      $('#litres').html(litres);
+      $('#litres').html(litres.toFixed(2));
 
       updateCost();
     }

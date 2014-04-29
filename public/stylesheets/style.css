@@ -45,6 +45,10 @@ input {
 	margin-top : 15px;
 }
 
+label {
+	color:#ffffff;
+}
+
 .text-box {
 	width : 250px;
 	margin-left : 5px;

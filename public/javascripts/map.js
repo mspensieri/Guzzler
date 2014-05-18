@@ -1,13 +1,13 @@
 var directionsDisplay;
+var map;
 
 $(document).ready(initialize);
 
 function initialize() 
 {
-  var map = initMap();
+  map = initMap();
 
   initSearchFields(map);
-  initDirections(map);
   initCalculationResultsContainer(map);
   initGasPriceSlider(map);
 }
@@ -39,6 +39,10 @@ function initSearchFields(map)
 
 function initDirections(map)
 {
+  if(directionsDisplay){
+    return;
+  }
+
   directionsDisplay = new google.maps.DirectionsRenderer();
   directionsDisplay.setMap(map);
 
@@ -112,19 +116,22 @@ function search()
   }
 
   directionService.route(directionRequest, function(res, status){
-    if (status == google.maps.DirectionsStatus.OK) {
-      directionsDisplay.setDirections(res);
-
-      var legs = res.routes[0].legs;
-      var litres = 0;
-      for(var i = 0; i < legs.length; i++){
-        litres = litres + getLitres(mileage, legs[i].distance.value);
-      }
-
-      $('#litres').html(litres.toFixed(2));
-
-      updateCost();
+    if(status != google.maps.DirectionsStatus.OK){
+      return;
     }
+
+    initDirections(map);
+    directionsDisplay.setDirections(res);
+
+    var legs = res.routes[0].legs;
+    var litres = 0;
+    for(var i = 0; i < legs.length; i++){
+      litres = litres + getLitres(mileage, legs[i].distance.value);
+    }
+
+    $('#litres').html(litres.toFixed(2));
+
+    updateCost();
   });
 }
 

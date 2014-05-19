@@ -120,6 +120,7 @@ function search()
       return;
     }
 
+    moveInputsToHeader();
     initDirections(map);
     directionsDisplay.setDirections(res);
 
@@ -133,6 +134,19 @@ function search()
 
     updateCost();
   });
+}
+
+function moveInputsToHeader()
+{
+  var intro = $("#intro");
+  var header = $("#header");
+
+  var element = $("#input-wrapper").detach();
+  element.removeClass("intro");
+  $('#header').append(element);
+
+  header.fadeIn(600);
+  intro.remove();
 }
 
 function updateCost()

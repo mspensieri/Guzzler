@@ -26,10 +26,10 @@ function initMap()
 function initSearchFields(map)
 {
   var origin = $('#start');
-  origin.val('Montreal, QC, Canada');
+  // origin.val('Montreal, QC, Canada');
 
   var destination = $('#end');
-  destination.val('Ottawa, ON, Canada');
+  // destination.val('Ottawa, ON, Canada');
 
   setAutocomplete(origin[0], map);
   setAutocomplete(destination[0], map);

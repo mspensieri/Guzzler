@@ -6,6 +6,7 @@ $(document).ready(function() {
     initSearchFields();
     initCalculationResultsContainer();
     initGasPriceSlider();
+  mixpanel.track("Page Load");
 });
 
 function initMap() {

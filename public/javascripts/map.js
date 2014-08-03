@@ -2,11 +2,11 @@ var directionsDisplay;
 var map;
 
 $(document).ready(function() {
+    mixpanel.track("Page Load");
     initMap();
     initSearchFields();
     initCalculationResultsContainer();
     initGasPriceSlider();
-  mixpanel.track("Page Load");
 });
 
 function initMap() {
@@ -20,16 +20,31 @@ function initMap() {
 }
 
 function initSearchFields() {
-    var origin = $('#start');
-    // origin.val('Montreal, QC, Canada');
+    addInput();
+    addInput();
+    $('#new-loc').on('click', addInput);
+}
 
-    var destination = $('#end');
-    // destination.val('Ottawa, ON, Canada');
+function addInput() {
+    var container = $('#input-container');
+    var numberOfChildren = container.children().length;
 
-    setAutocomplete(origin[0], map);
-    setAutocomplete(destination[0], map);
+    var input = $("<input>");
+    input.attr('id', "loc" + numberOfChildren);
+    input.addClass('location-input');
+    input.attr('placeholder', 'Enter a location');
+    input.keyup(function(e) {
+        if (e.keyCode == 13) {
+            search();
+        }
+    });
+    input.on('blur', search);
 
-    $('#go').on('click', search);
+
+    setAutocomplete(input[0]);
+
+
+    $('#new-loc').before(input);
 }
 
 function initDirections() {
@@ -40,12 +55,11 @@ function initDirections() {
     directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setMap(map);
 
-    var directionsResultsContainer = $("<div>");
-    directionsResultsContainer.attr('index', 1);
-    directionsResultsContainer.attr('id', "directions");
+    var directionsElement = $("#directions");
+    directionsElement.removeClass("collapsed");
+    $("#map-container").addClass("shrink");
 
-    map.controls[google.maps.ControlPosition.LEFT_CENTER].push(directionsResultsContainer[0]);
-    directionsDisplay.setPanel(directionsResultsContainer[0]);
+    directionsDisplay.setPanel(directionsElement[0]);
 }
 
 function initCalculationResultsContainer() {
@@ -82,22 +96,38 @@ function getLitres(mileage, metres) {
 }
 
 function search() {
-    var origin = $('#start').val();
-    var destination = $('#end').val();
-    var mileage = $('#mileage').val();
+    var mileage = 7;
+
+    var destinations = [];
+
+    $(".location-input").each(function(index, element) {
+        destinations.push($(element).val());
+    });
+
+    var count = destinations.length;
+
+    if (count < 2) {
+        return;
+    }
 
     var directionService = new google.maps.DirectionsService();
 
+    var slice = destinations.slice(1, count - 1);
+    var waypoints = [];
+    for (var index in slice) {
+        waypoints.push({
+            location: slice[index]
+        });
+    }
+
     var directionRequest = {
-        origin: origin,
-        destination: destination,
+        origin: destinations[0],
+        destination: destinations[count - 1],
         travelMode: google.maps.TravelMode.DRIVING
     };
-    if ($('#roundtrip').prop('checked')) {
-        directionRequest.destination = origin;
-        directionRequest.waypoints = [{
-            'location': destination
-        }];
+
+    if (waypoints.length > 0) {
+        directionRequest.waypoints = waypoints;
     }
 
     directionService.route(directionRequest, function(res, status) {
@@ -105,7 +135,6 @@ function search() {
             return;
         }
 
-        moveInputsToHeader();
         initDirections();
         directionsDisplay.setDirections(res);
 
@@ -119,18 +148,6 @@ function search() {
 
         updateCost();
     });
-}
-
-function moveInputsToHeader() {
-    var intro = $("#intro");
-    var header = $("#header");
-
-    var element = $("#input-wrapper").detach();
-    element.removeClass("intro");
-    $('#header').append(element);
-
-    header.fadeIn(600);
-    intro.remove();
 }
 
 function updateCost() {

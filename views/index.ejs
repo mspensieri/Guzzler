@@ -15,8 +15,6 @@ mixpanel.init("<%= mixpanel_token %>");</script>
   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDTzJ-utsq7meBZdCL8uGtOuSMJdGUiW2w&amp;sensor=false&amp;libraries=places"> </script>
 </head>
 <body>
-  <%- include banner.ejs %>
-  <%- include intro.ejs %>
-  <div id="map-canvas"></div>
+  <%-include layout.ejs %>
 </body>
 </html>

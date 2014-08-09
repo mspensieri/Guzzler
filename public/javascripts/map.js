@@ -7,6 +7,21 @@ $(document).ready(function() {
     initSearchFields();
     initCalculationResultsContainer();
     initGasPriceSlider();
+
+    $('#directions-toggle').on('click', function(ev, el) {
+        var element = $("#directions-toggle-label");
+        var directionsElement = $("#directions");
+
+        if (element.html() === "&lt;") {
+            directionsElement.addClass("collapsed");
+            $("#map-container").removeClass("shrink");
+            element.html("&gt;");
+        } else {
+            directionsElement.removeClass("collapsed");
+            $("#map-container").addClass("shrink");
+            element.html("&lt;");
+        }
+    });
 });
 
 function initMap() {
@@ -55,11 +70,9 @@ function initDirections() {
     directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setMap(map);
 
-    var directionsElement = $("#directions");
-    directionsElement.removeClass("collapsed");
-    $("#map-container").addClass("shrink");
+    directionsDisplay.setPanel($("#directions")[0]);
 
-    directionsDisplay.setPanel(directionsElement[0]);
+    $('#directions-toggle').removeClass('hidden');
 }
 
 function initCalculationResultsContainer() {
